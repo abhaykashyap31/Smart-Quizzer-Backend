@@ -1,0 +1,196 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Neue', cursive;
+        }
+
+        body {
+            background-color: #f0f4ff;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .inbox-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            display: flex;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: #6366f1;
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .inbox-tabs {
+            list-style-type: none;
+        }
+
+        .inbox-tabs li {
+            margin-bottom: 15px;
+        }
+
+        .inbox-tabs li a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .inbox-tabs li a:hover, .inbox-tabs li a.active {
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        .inbox-tabs li a i {
+            margin-right: 10px;
+        }
+
+        .inbox-content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .message-list {
+            list-style-type: none;
+        }
+
+        .message-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .message-item:hover {
+            background-color: #f0f4ff;
+        }
+
+        .message-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+
+        .message-details {
+            flex-grow: 1;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .message-name {
+            font-weight: bold;
+            color: #6366f1;
+        }
+
+        .message-time {
+            color: #6a7280;
+            font-size: 0.8em;
+        }
+
+        .message-preview {
+            color: #6a7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .message-unread {
+            background-color: #e6f2ff;
+        }
+
+        .message-unread .message-name {
+            font-weight: bold;
+        }
+
+        .message-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .message-badge {
+            background-color: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            margin-left: 10px;
+        }
+
+        .read-marker {
+            width: 10px;
+            height: 10px;
+            background-color: #6366f1;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .message-detail-view {
+            padding: 20px;
+            background-color: #f9fafb;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .message-subject {
+            font-size: 1.2em;
+            color: #6366f1;
+            margin-bottom: 15px;
+        }
+
+        .message-body {
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .message-attachments {
+            margin-top: 20px;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            background-color: #e0e7ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .attachment-icon {
+            color: #6366f1;
+            margin-right: 10px;
+        }
+
+        .attachment-details {
+            flex-grow: 1;
+        }

@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Comic Neue', cursive;
+}
+
+body {
+  background-color: #f0f4ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 255, 0.1);
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+  text-align: center;
+}
+
+.toggle-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.toggle-btn {
+  background-color: #e0e7ff;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn.active {
+  background-color: #6366f1;
+  color: white;
+}
+
+.form-container {
+  display: block;
+}
+
+.login-form, .signup-form {
+  display: none;
+}
+
+.login-form.active, .signup-form.active {
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 2px solid #d1d5db;
+  border-radius: 10px;
+  background-color: #f9fafb;
+  font-size: 16px;
+}
+
+input[type="file"] {
+  border: 2px dashed #6366f1;
+}
+
+select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 2px solid #d1d5db;
+  border-radius: 10px;
+  background-color: #f9fafb;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #4f46e5;
+}
+
+.form-title {
+  color: #6366f1;
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+}
