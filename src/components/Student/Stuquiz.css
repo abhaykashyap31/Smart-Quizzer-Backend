@@ -38,7 +38,7 @@
     font-size: 24px;
   }
   
-  .Student-quiz input {
+  input[type="text"] {
     padding: 12px;
     border-radius: 10px;
     border: 3px solid #4ecdc4;

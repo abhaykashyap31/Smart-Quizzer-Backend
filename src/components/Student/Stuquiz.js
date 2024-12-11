@@ -1,13 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios"; 
 import "./Stuquiz.css";
-
 const StudentQuiz = () => {
-  const [screen, setScreen] = useState("start"); // start, quiz, submit
+  const [screen, setScreen] = useState("start"); 
   const [studentName, setStudentName] = useState("");
   const [quizCode, setQuizCode] = useState("");
   const [questions, setQuestions] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(1800); 
   const [answers, setAnswers] = useState({});
+
+  const handleSubmit = useCallback(() => {
+    const collectedAnswers = questions.map((question) => ({
+      questionId: question._id,
+      answer: answers[question._id] || "",
+    }));
+
+    console.log({
+      studentName,
+      quizCode,
+      answers: collectedAnswers,
+      timeRemaining: timeLeft,
+    });
+
+    
+    // axios.post(`http://localhost:5000/api/submitQuiz`, { studentName, quizCode, answers: collectedAnswers });
+    setScreen("submit");
+  }, [questions, answers, studentName, quizCode, timeLeft]);
 
   useEffect(() => {
     if (screen === "quiz") {
@@ -24,44 +42,34 @@ const StudentQuiz = () => {
 
       return () => clearInterval(timer);
     }
-  }, [screen]);
+  }, [screen, handleSubmit]);
 
-  const handleStart = () => {
+  const handleStart = async () => {
     if (!studentName || quizCode.length !== 16) {
       alert("Please enter your name and a valid 16-character quiz code!");
       return;
     }
 
-    // Mock questions (in a real app, fetch from backend)
-    const mockQuestions = [
-      { id: 1, text: "What is the capital of France?" },
-      { id: 2, text: "Explain the concept of photosynthesis." },
-      { id: 3, text: "Solve the equation: 2x + 5 = 15" },
-    ];
+    try {
+      const response = await axios.get(`http://localhost:5000/api/quizzes/${quizCode}`);
+      const quizData = response.data;
 
-    setQuestions(mockQuestions);
-    setScreen("quiz");
+      if (!quizData || !quizData.questions || quizData.questions.length === 0) {
+        alert("Invalid quiz code or no questions available!");
+        return;
+      }
+
+      setQuestions(quizData.questions);
+      setTimeLeft(quizData.quizTime || 1800); 
+      setScreen("quiz");
+    } catch (error) {
+      console.error("Error fetching quiz data:", error);
+      alert("Failed to fetch quiz. Please check the quiz code and try again.");
+    }
   };
 
   const handleAnswerChange = (questionId, value) => {
     setAnswers((prevAnswers) => ({ ...prevAnswers, [questionId]: value }));
-  };
-
-  const handleSubmit = () => {
-    // Collect the answers
-    const collectedAnswers = questions.map((question) => ({
-      questionId: question.id,
-      answer: answers[question.id] || "",
-    }));
-
-    console.log({
-      studentName,
-      quizCode,
-      answers: collectedAnswers,
-      timeRemaining: timeLeft,
-    });
-
-    setScreen("submit");
   };
 
   const renderStartScreen = () => (
@@ -87,19 +95,18 @@ const StudentQuiz = () => {
   const renderQuizScreen = () => (
     <div className="quiz-screen">
       <div className="timer">
-        Time Left: {Math.floor(timeLeft / 60)}:
-        {String(timeLeft % 60).padStart(2, "0")}
+        Time Left: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
       </div>
       <div className="questions-container">
         {questions.map((question, index) => (
-          <div key={question.id} className="question-card">
+          <div key={question._id} className="question-card">
             <div className="question-text">
               Question {index + 1}: {question.text}
             </div>
             <textarea
               placeholder="Type your answer here"
-              value={answers[question.id] || ""}
-              onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+              value={answers[question._id] || ""}
+              onChange={(e) => handleAnswerChange(question._id, e.target.value)}
             ></textarea>
           </div>
         ))}

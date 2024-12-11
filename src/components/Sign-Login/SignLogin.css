@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&display=swap');
 
-* {
+/* * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -14,7 +14,7 @@ body {
   align-items: center;
   min-height: 100vh;
   padding: 20px;
-}
+} */
 
 .container {
   background-color: #ffffff;
@@ -42,7 +42,7 @@ body {
   transition: all 0.3s ease;
 }
 
-.toggle-btn.active {
+.toggle-btn {
   background-color: #6366f1;
   color: white;
 }
@@ -59,7 +59,7 @@ body {
   display: block;
 }
 
-input {
+.signup-form input {
   width: 100%;
   padding: 12px;
   margin: 10px 0;
@@ -69,7 +69,7 @@ input {
   font-size: 16px;
 }
 
-input[type="file"] {
+.signup-form input[type="file"] {
   border: 2px dashed #6366f1;
 }
 
@@ -83,7 +83,7 @@ select {
   font-size: 16px;
 }
 
-button {
+button[type = submit] {
   width: 100%;
   padding: 15px;
   background-color: #6366f1;
@@ -95,7 +95,7 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover {
+button[type = submit]:hover {
   background-color: #4f46e5;
 }
 

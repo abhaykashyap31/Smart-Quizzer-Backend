@@ -37,7 +37,17 @@
     padding: 10px;
     border-radius: 10px;
     border: 2px solid #4ecdc4;
+    resize: none;
     font-family: "Comic Sans MS", cursive;
+  }
+
+  .quiz-time-input input{
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #4ecdc4;
+    resize: none;
+    font-family: "Comic Sans MS", cursive;
+    margin-bottom: 10px;
   }
   
   .quiz-code-input {
