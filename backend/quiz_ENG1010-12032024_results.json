@@ -1,0 +1,16 @@
+[
+    {
+        "question_id": "6759a2c9057d0040bd253a12",
+        "question_text": "what is  langugage?",
+        "reference_answer": "comminucation intermediate",
+        "student_answer": "a means of communication",
+        "scaled_similarity": 0.43402148429501963
+    },
+    {
+        "question_id": "6759a2c9057d0040bd253a13",
+        "question_text": "is reading speed necessary?",
+        "reference_answer": "no",
+        "student_answer": "reading speed is not necessary",
+        "scaled_similarity": 0.10003466159105301
+    }
+]
