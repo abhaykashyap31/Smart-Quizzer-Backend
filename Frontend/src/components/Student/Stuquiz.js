@@ -1,30 +1,61 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios"; 
 import "./Stuquiz.css";
+
 const StudentQuiz = () => {
-  const [screen, setScreen] = useState("start"); 
+  const [screen, setScreen] = useState("start");
   const [studentName, setStudentName] = useState("");
   const [quizCode, setQuizCode] = useState("");
   const [questions, setQuestions] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(1800); 
+  const [timeLeft, setTimeLeft] = useState(1800);
   const [answers, setAnswers] = useState({});
-
+  const [gradeSaved, setGradeSaved] = useState(false);  // To track if grade is saved
+  
+  const downloadFile = (quizData) => {
+    // Convert the quizData to a raw string (no formatting)
+    const data = JSON.stringify(quizData);
+  
+    const blob = new Blob([data], { type: "text/plain" });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'quizData.txt'; // Specify the file name
+    link.click(); // Trigger the download
+  };
+  
   const handleSubmit = useCallback(() => {
-    const collectedAnswers = questions.map((question) => ({
-      questionId: question._id,
-      answer: answers[question._id] || "",
-    }));
-
-    console.log({
-      studentName,
-      quizCode,
-      answers: collectedAnswers,
-      timeRemaining: timeLeft,
-    });
-
+    const collectedAnswers = questions.reduce((acc, question) => {
+      const answer = answers[question._id] || ""; // Use question._id as key
     
-    // axios.post(`http://localhost:5000/api/submitQuiz`, { studentName, quizCode, answers: collectedAnswers });
-    setScreen("submit");
+      // Standardize answer format (either array to string or string to array)
+      if (Array.isArray(answer)) {
+        acc[question._id] = answer.join(","); // Convert array to comma-separated string
+      } else {
+        acc[question._id] = answer;
+      }
+
+      return acc;
+    }, {});
+
+    const submissionData = {
+      quiz_code: quizCode,
+      student_user_id: studentName,
+      student_answers: collectedAnswers,
+      time_remaining: timeLeft,
+    };
+
+    console.log(submissionData);
+
+    axios
+      .post("http://localhost:5000/evaluate", submissionData)
+      .then((response) => {
+        alert("Quiz submitted successfully:");
+        setGradeSaved(true);
+        setScreen("submit");
+      })
+      .catch((error) => {
+        console.error("Error submitting quiz:", error.response?.data || error.message);
+        alert("There was an issue submitting your quiz. Please try again later.");
+      });
   }, [questions, answers, studentName, quizCode, timeLeft]);
 
   useEffect(() => {
@@ -69,7 +100,66 @@ const StudentQuiz = () => {
   };
 
   const handleAnswerChange = (questionId, value) => {
-    setAnswers((prevAnswers) => ({ ...prevAnswers, [questionId]: value }));
+    setAnswers((prevAnswers) => ({
+      ...prevAnswers,
+      [questionId]: value, // Use questionId (from the quiz data) instead of the index
+    }));
+  };
+
+  const renderQuestion = (question, index) => {
+    const questionId = question._id; // Use _id as the unique identifier
+
+    if (question.type === "mcq") {
+      return (
+        <div key={questionId} className="question-card">
+          <div className="question-text">
+            Question {index + 1}: {question.text}
+          </div>
+          <div className="options">
+            {question.options.map((option, optionIndex) => {
+              const selectedOptions = answers[questionId] || [];
+              const isChecked = selectedOptions.includes(option);
+
+              return (
+                <div key={`${questionId}_${optionIndex}`} className="option">
+                  <input
+                    type="checkbox"
+                    id={`${questionId}_${optionIndex}`}
+                    checked={isChecked}
+                    onChange={(e) => {
+                      const updatedOptions = e.target.checked
+                        ? [...selectedOptions, option]
+                        : selectedOptions.filter((opt) => opt !== option);
+    
+                      handleAnswerChange(questionId, updatedOptions);
+                    }}
+                  />
+                  <label htmlFor={`${questionId}_${optionIndex}`}>{option}</label>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    if (question.type === "image" || question.type === "text") {
+      return (
+        <div key={questionId} className="question-card">
+          <div className="question-text">
+            Question {index + 1}: {question.text}
+          </div>
+          {question.image && <img src={question.image} alt="Question" />}
+          <textarea
+            placeholder="Type your answer here"
+            value={answers[questionId] || ""}
+            onChange={(e) => handleAnswerChange(questionId, e.target.value)}
+          ></textarea>
+        </div>
+      );
+    }
+
+    return null;
   };
 
   const renderStartScreen = () => (
@@ -77,7 +167,7 @@ const StudentQuiz = () => {
       <h1>🌟 Take Your Quiz! 📝</h1>
       <input
         type="text"
-        placeholder="Enter Your Name"
+        placeholder="Enter Your Roll Number"
         value={studentName}
         onChange={(e) => setStudentName(e.target.value)}
       />
@@ -98,18 +188,7 @@ const StudentQuiz = () => {
         Time Left: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
       </div>
       <div className="questions-container">
-        {questions.map((question, index) => (
-          <div key={question._id} className="question-card">
-            <div className="question-text">
-              Question {index + 1}: {question.text}
-            </div>
-            <textarea
-              placeholder="Type your answer here"
-              value={answers[question._id] || ""}
-              onChange={(e) => handleAnswerChange(question._id, e.target.value)}
-            ></textarea>
-          </div>
-        ))}
+        {questions.map(renderQuestion)}
       </div>
       <button onClick={handleSubmit}>Submit Quiz</button>
     </div>
@@ -119,6 +198,7 @@ const StudentQuiz = () => {
     <div className="submit-screen">
       <h2>🎉 Quiz Submitted! 🏆</h2>
       <p>Thank you for completing the quiz, {studentName}!</p>
+      {gradeSaved && <p>Your grade has been saved successfully!</p>}
     </div>
   );
 

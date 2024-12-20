@@ -1,0 +1,23 @@
+[
+    {
+        "question_id": "675ddfab39962e00c9c4a4a6",
+        "question_text": "What is uniqueness (in scope of mathematics) ?",
+        "reference_answer": "Intersection between a pair of curves or lines",
+        "student_answer": "Intersection",
+        "question_marks": 3,
+        "scaled_similarity": 0.9665919504140277,
+        "question_score": 2.899775851242083
+    },
+    {
+        "question_id": "675ddfab39962e00c9c4a4a7",
+        "question_text": "What do you understand by significance of derivatives and critical points ?",
+        "reference_answer": "Function and the behavior of curves/lines",
+        "student_answer": "Behavior",
+        "question_marks": 7,
+        "scaled_similarity": 0.4358507634351563,
+        "question_score": 3.050955344046094
+    },
+    {
+        "total_marks": 5.950731195288177
+    }
+]

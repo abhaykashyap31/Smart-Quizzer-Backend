@@ -1,0 +1,10 @@
+const downloadFile = (quizData) => {
+    // Convert the quizData to a raw string (no formatting)
+    const data = JSON.stringify(quizData);
+  
+    const blob = new Blob([data], { type: "text/plain" });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'quizData.txt'; // Specify the file name
+    link.click(); // Trigger the download
+  };

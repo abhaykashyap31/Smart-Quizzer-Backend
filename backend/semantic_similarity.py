@@ -46,12 +46,14 @@ def process_quiz_response(quiz_code, student_answers):
 
     questions = quiz_template["questions"]
     results = []
+    total_marks = 0
 
     # Compare each student answer with the reference answer
     for question in questions:
-        question_id = str(question["_id"]) 
+        question_id = str(question["_id"])
         reference_answer = question["answer"]
         question_text = question["text"]
+        marks = question["marks"]
 
         # Fetch corresponding student answer
         student_answer = student_answers.get(question_id, "")
@@ -62,14 +64,22 @@ def process_quiz_response(quiz_code, student_answers):
         else:
             similarity, entailment_score, contradiction_score, scaled_similarity = compute_scaled_similarity(reference_answer, student_answer)
 
+        question_score = marks * scaled_similarity
+        total_marks += question_score
+
         # Save the results
         results.append({
             "question_id": question_id,
             "question_text": question_text,
             "reference_answer": reference_answer,
             "student_answer": student_answer,
-            "question_score": scaled_similarity
+            "question_marks": marks,
+            "scaled_similarity": scaled_similarity,
+            "question_score": question_score
         })
+
+    # Add total marks to results
+    results.append({"total_marks": total_marks})
 
     # Write results to a JSON file
     output_file = f"quiz_{quiz_code}_results.json"
@@ -80,10 +90,10 @@ def process_quiz_response(quiz_code, student_answers):
 
 # Example usage
 if __name__ == "__main__":
-    quiz_code = "ENG1010-12032024"
+    quiz_code = "CSL3050-12122004"
     student_answers = {
-        "6759a2c9057d0040bd253a12": "a means of communication",
-        "6759a2c9057d0040bd253a13": "reading speed is not necessary"
+        "675ddfab39962e00c9c4a4a6": "Intersection",
+        "675ddfab39962e00c9c4a4a7": "Behavior"
     }
 
     output_file = process_quiz_response(quiz_code, student_answers)
