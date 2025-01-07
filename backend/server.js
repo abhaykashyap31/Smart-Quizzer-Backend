@@ -1,7 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const axios = require("axios");
 const cors = require("cors");
+require('dotenv').config();
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 const app = express();
 app.use(express.json());
 
@@ -36,6 +38,26 @@ const quizSchema = new mongoose.Schema({
       marks: { type: Number, required: true },
     },
   ],
+});
+
+app.get("/api/grades/:quizCode", async (req, res) => {
+  const { quizCode } = req.params;
+
+  try {
+    const grades = await Grade.find({ quizCode });
+
+    if (grades.length === 0) {
+      return res.status(404).json({ error: "No grades found for this quiz" });
+    }
+
+    res.status(200).json({
+      message: "Grades retrieved successfully",
+      grades,
+    });
+  } catch (error) {
+    console.error("Error retrieving grades:", error);
+    res.status(500).json({ error: "Failed to retrieve grades" });
+  }
 });
 
 const Quiz = mongoose.model("quizzes", quizSchema);
@@ -121,24 +143,22 @@ app.get("/api/quizzes/:quizCode", async (req, res) => {
   }
 });
 
-const getSimilarityScore = async (answer1, answer2) => {
-  const url = "https://api-inference.huggingface.co/models/sentence-transformers/paraphrase-MiniLM-L6-v2";
-  const headers = { Authorization: `Bearer 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` };
+const genAI = new GoogleGenerativeAI(process.env.API_KEY_GEMINI);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
+async function getSimilarityScore(answer1, answer2) {
   try {
-    const response = await axios.post(
-      url,
-      {
-        inputs: { source_sentence: answer1, sentences: [answer2] },
-      },
-      { headers }
-    );
-    return response.data[0];
+    const prompt = `Compare the similarity between the two answers on a scale from 0 to 1. Treat case-insensitive matches  or minor typographical differences as fully identical (score = 1). Respond with only the numeric similarity score:\nAnswer 1: ${answer1}\nAnswer 2: ${answer2}`;
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text().trim();
+
+    const similarityScore = Math.min(1, parseFloat(responseText)) || 0; 
+    return similarityScore;
   } catch (error) {
-    console.error("Error with Hugging Face API:", error);
-    return 0;
+    console.error("Error with Google Generative AI:", error);
+    return 0; 
   }
-};
+}
 
 function transformFormat(student_answers, questionId, quiz) {
   const studentAnswer = student_answers[questionId] || "";
@@ -148,47 +168,39 @@ function transformFormat(student_answers, questionId, quiz) {
     return;
   }
 
-  const transformedData = {
-    inputs: {
-      source_sentence: studentAnswer, 
-      sentences: [question.answer]     
-    }
+  return {
+    sourceAnswer: studentAnswer,
+    correctAnswer: question.answer,
   };
-  return JSON.stringify(transformedData, null, 2);
 }
 
-
 app.post("/evaluate", async (req, res) => {
-  const { quiz_code, student_user_id, student_answers, time_remaining } = req.body;
+  const { quiz_code, student_user_id, student_answers } = req.body;
 
   try {
     const quiz = await Quiz.findOne({ quizCode: quiz_code });
     if (!quiz) {
       return res.status(404).json({ error: "Quiz not found" });
     }
+
     const results = [];
     let totalMarks = 0;
     let obtainedMarks = 0;
 
     for (const questionId of Object.keys(student_answers)) {
-      const studentAnswer = student_answers[questionId] || "";
-      const question = quiz.questions.find(q => q._id.toString() === questionId); 
-      if (!question) {
-        continue; 
+      const { sourceAnswer, correctAnswer } = transformFormat(student_answers, questionId, quiz);
+      if (!sourceAnswer || !correctAnswer) {
+        continue;
       }
-      const transformedInput = transformFormat(student_answers, questionId, quiz);
 
-      const parsedInput = JSON.parse(transformedInput);
-      const similarityScore = await getSimilarityScore(
-        parsedInput.inputs.source_sentence,
-        parsedInput.inputs.sentences[0]
-      );
-      const marksObtained = similarityScore * question.marks;
+      const similarityScore = await getSimilarityScore(sourceAnswer, correctAnswer);
+      const question = quiz.questions.find(q => q._id.toString() === questionId);
+      const marksObtained = Math.min(similarityScore * question.marks, question.marks);
 
       results.push({
         question: question.text,
         correctAnswer: question.answer,
-        studentAnswer,
+        studentAnswer: sourceAnswer,
         similarityScore,
         marksObtained,
         totalMarks: question.marks,
@@ -212,7 +224,5 @@ app.post("/evaluate", async (req, res) => {
     res.status(500).json({ error: "An error occurred during evaluation" });
   }
 });
-
-
 
 app.listen(5000, () => console.log("Server running on http://localhost:5000"));

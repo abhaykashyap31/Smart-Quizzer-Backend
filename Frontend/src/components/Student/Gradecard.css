@@ -29,7 +29,7 @@
     background-color: white;
     padding: 15px;
     border-radius: 10px;
-    width: 30%;
+    max-width: 40%;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   }
   
@@ -38,7 +38,9 @@
     color: #4ecdc4;
     font-size: 18px;
   }
-  
+  .download{
+    background-color: #ff6b6b;
+  }
   .summary-card p {
     font-size: 24px;
     font-weight: bold;
@@ -46,7 +48,7 @@
     color: #ff6b6b;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    /* text-overflow: ellipsis; */
   }
   
   .chart-container {

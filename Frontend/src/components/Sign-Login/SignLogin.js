@@ -41,7 +41,6 @@ const SignupLogin = () => {
     try {
       await createUserWithEmailAndPassword(Auth, email, password);
       const user = Auth.currentUser;
-      console.log(user);
       if (user) {
         await setDoc(doc(db, 'Users', user.uid), {
           email: user.email,
@@ -137,10 +136,10 @@ const SignupLogin = () => {
 
           <select value={Department} onChange={handleDepartmentChange} required>
             <option value="">Select Department</option>
-            <option value="Computer Science">Computer Science</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Arts">Arts</option>
-            <option value="Science">Science</option>
+            <option value="Commerce and Business">Commerce and Business</option>
+            <option value="Engineering and Architecture">Engineering and Architecture</option>
+            <option value="Arts and Humanities">Arts and Humanities</option>
+            <option value="Science and Research">Science and Research</option>
           </select>
 
           <select value={gender} onChange={handleGenderChange} required>

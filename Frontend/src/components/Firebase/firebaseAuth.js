@@ -4,10 +4,11 @@ import {createUserwithEmailandPassword, signInwithEmailandPassword} from "https:
 import {getFirestore, setDoc, doc} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import {getAuth} from "firebase/auth";
 import { getStorage } from 'firebase/storage';
+require('dotenv').config();
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 const firebaseConfig = {
-  apiKey: "AIzaSyBCGzpGOs09eelzku7saVWASTW_dl11gYQ",
+  apiKey: process.env.firebase_KEY,
   authDomain: "smart-quizzer-46bd7.firebaseapp.com",
   projectId: "smart-quizzer-46bd7",
   storageBucket: "smart-quizzer-46bd7.firebasestorage.app",

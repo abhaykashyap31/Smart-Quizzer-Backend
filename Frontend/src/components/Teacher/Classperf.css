@@ -34,8 +34,11 @@ body {
     border-radius: 15px;
     padding: 20px;
     text-align: center;
-    width: 22%;
+    max-width: 30%;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   
   .stat-card h3 {
@@ -91,6 +94,7 @@ body {
   .filter-section {
     display: flex;
     justify-content: space-between;
+    margin-right:30px ;
     margin-bottom: 20px;
   }
   
@@ -106,7 +110,6 @@ body {
     color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 20px;
     cursor: pointer;
     font-family: 'Comic Sans MS', cursive;
     transition: transform 0.2s, background-color 0.2s;
